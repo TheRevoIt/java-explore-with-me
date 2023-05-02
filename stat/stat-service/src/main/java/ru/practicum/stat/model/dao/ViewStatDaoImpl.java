@@ -24,44 +24,42 @@ public class ViewStatDaoImpl implements ViewStatDao {
 
     @Override
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, boolean unique, List<String> urls) {
-        {
-            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-            CriteriaQuery<Stats> viewStatsCriteriaQuery = criteriaBuilder.createQuery(Stats.class);
-            Root<Hit> HitResult = viewStatsCriteriaQuery.from(Hit.class);
-            List<Predicate> predicates = new ArrayList<>();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Stats> viewStatsCriteriaQuery = criteriaBuilder.createQuery(Stats.class);
+        Root<Hit> hitResult = viewStatsCriteriaQuery.from(Hit.class);
+        List<Predicate> predicates = new ArrayList<>();
 
-            if (urls != null) {
-                predicates.add(criteriaBuilder.or(urls.stream()
-                        .map(uri -> criteriaBuilder.like(HitResult.get("uri"), uri))
-                        .collect(Collectors.toList())
-                        .toArray(Predicate[]::new)
-                ));
-            }
-            viewStatsCriteriaQuery.select(criteriaBuilder.construct(Stats.class,
-                            HitResult.get("uri"),
-                            HitResult.get("app"),
-                            unique ? criteriaBuilder.countDistinct(HitResult.get("ip")) : criteriaBuilder.count(HitResult.get("ip"))
-                    )
-            );
-            viewStatsCriteriaQuery.groupBy(
-                    HitResult.get("uri"),
-                    HitResult.get("app"),
-                    HitResult.get("ip")
-            );
-            viewStatsCriteriaQuery.orderBy(criteriaBuilder
-                    .desc(unique ?
-                            criteriaBuilder.countDistinct(HitResult.get("ip"))
-                            : criteriaBuilder.count(HitResult.get("ip"))));
-            Predicate betweenPredicate = criteriaBuilder
-                    .between(HitResult.get("timestamp"), start, end);
-            predicates.add(betweenPredicate);
-            viewStatsCriteriaQuery.where(predicates.toArray(Predicate[]::new));
-
-            return entityManager.createQuery(viewStatsCriteriaQuery)
-                    .getResultList()
-                    .stream()
-                    .map(StatsMapper::toViewStatsDto)
-                    .collect(Collectors.toList());
+        if (urls != null) {
+            predicates.add(criteriaBuilder.or(urls.stream()
+                    .map(uri -> criteriaBuilder.like(hitResult.get("uri"), uri))
+                    .collect(Collectors.toList())
+                    .toArray(Predicate[]::new)
+            ));
         }
+        viewStatsCriteriaQuery.select(criteriaBuilder.construct(Stats.class,
+                        hitResult.get("uri"),
+                        hitResult.get("app"),
+                        unique ? criteriaBuilder.countDistinct(hitResult.get("ip")) : criteriaBuilder.count(hitResult.get("ip"))
+                )
+        );
+        viewStatsCriteriaQuery.groupBy(
+                hitResult.get("uri"),
+                hitResult.get("app"),
+                hitResult.get("ip")
+        );
+        viewStatsCriteriaQuery.orderBy(criteriaBuilder
+                .desc(unique ?
+                        criteriaBuilder.countDistinct(hitResult.get("ip"))
+                        : criteriaBuilder.count(hitResult.get("ip"))));
+        Predicate betweenPredicate = criteriaBuilder
+                .between(hitResult.get("timestamp"), start, end);
+        predicates.add(betweenPredicate);
+        viewStatsCriteriaQuery.where(predicates.toArray(Predicate[]::new));
+
+        return entityManager.createQuery(viewStatsCriteriaQuery)
+                .getResultList()
+                .stream()
+                .map(StatsMapper::toViewStatsDto)
+                .collect(Collectors.toList());
     }
 }
