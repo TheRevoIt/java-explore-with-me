@@ -24,4 +24,18 @@ public interface StatRepository extends JpaRepository<Hit, Long> {
             "GROUP BY hits.app, hits.uri " +
             "ORDER BY COUNT(hits.ip) DESC")
     List<Stats> getAllStats(LocalDateTime start, LocalDateTime end, List<String> uri);
+
+    @Query("SELECT new ru.practicum.stat.model.Stats(hits.app, hits.uri, COUNT(DISTINCT hits.ip)) " +
+            "FROM Hit AS hits " +
+            "WHERE hits.timestamp BETWEEN ?1 AND ?2 " +
+            "GROUP BY hits.app, hits.uri " +
+            "ORDER BY COUNT(DISTINCT hits.ip) DESC")
+    List<Stats> getAllStatsUniqueNoUrl(LocalDateTime start, LocalDateTime end);
+
+    @Query("SELECT new ru.practicum.stat.model.Stats(hits.app, hits.uri, COUNT(hits.ip)) " +
+            "FROM Hit AS hits " +
+            "WHERE hits.timestamp BETWEEN ?1 AND ?2 " +
+            "GROUP BY hits.app, hits.uri " +
+            "ORDER BY COUNT(hits.ip) DESC")
+    List<Stats> getAllStatsNoUrl(LocalDateTime start, LocalDateTime end);
 }
