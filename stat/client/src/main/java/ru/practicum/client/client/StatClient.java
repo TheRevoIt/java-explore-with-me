@@ -34,8 +34,7 @@ public class StatClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getStats(LocalDateTime start, LocalDateTime end, boolean unique, List<String> urls) {
-        String paramsUri = urls.stream().reduce("", (a, b) -> b + "," + a);
-
+        String paramsUri = String.join(",", urls);
         Map<String, Object> parameters = Map.of(
                 "start", start.format(DATE_TIME_FORMATTER),
                 "end", end.format(DATE_TIME_FORMATTER),
