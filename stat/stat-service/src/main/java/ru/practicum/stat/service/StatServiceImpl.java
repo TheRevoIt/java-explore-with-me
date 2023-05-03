@@ -27,18 +27,18 @@ public class StatServiceImpl implements StatService {
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, boolean unique, List<String> urls) {
         if (urls == null || urls.isEmpty()) {
             if (unique) {
-                return statRepository.getAllStatsUnique(start, end, urls).stream().map(StatsMapper::toViewStatsDto)
-                        .collect(Collectors.toList());
-            } else {
-                return statRepository.getAllStats(start, end, urls).stream().map(StatsMapper::toViewStatsDto)
-                        .collect(Collectors.toList());
-            }
-        } else {
-            if (unique) {
                 return statRepository.getAllStatsUniqueNoUrl(start, end).stream().map(StatsMapper::toViewStatsDto)
                         .collect(Collectors.toList());
             } else {
                 return statRepository.getAllStatsNoUrl(start, end).stream().map(StatsMapper::toViewStatsDto)
+                        .collect(Collectors.toList());
+            }
+        } else {
+            if (unique) {
+                return statRepository.getAllStatsUnique(start, end, urls).stream().map(StatsMapper::toViewStatsDto)
+                        .collect(Collectors.toList());
+            } else {
+                return statRepository.getAllStats(start, end, urls).stream().map(StatsMapper::toViewStatsDto)
                         .collect(Collectors.toList());
             }
         }
