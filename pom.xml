@@ -22,6 +22,18 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+	<modules>
+		<module>stat</module>
+	</modules>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -173,14 +185,6 @@
 		</profile>
 		<profile>
 			<id>coverage</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 	</profiles>
 
